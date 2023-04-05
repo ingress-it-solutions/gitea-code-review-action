@@ -10,8 +10,8 @@ jobs:
   code-review:
     if: |
       github.event_name == 'pull_request' ||
-        (github.event.comment.user.login == 'adshao' &&
-          startsWith(github.event.comment.body, 'chatgpt'))
+        (github.event.comment.user.login == 'vandanafuletra' &&
+          startsWith(github.event.comment.body, 'openai'))
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -21,7 +21,7 @@ jobs:
       uses: ./
       with:
         PROGRAMMING_LANGUAGE: 'JavaScript'
-        REVIEW_COMMENT_PREFIX: 'chatgpt:'
-        FULL_REVIEW_COMMENT: 'chatgpt'
+        REVIEW_COMMENT_PREFIX: 'openai:'
+        FULL_REVIEW_COMMENT: 'openai'
         OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
