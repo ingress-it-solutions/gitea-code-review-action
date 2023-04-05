@@ -39301,13 +39301,22 @@ async function run() {
     const octokit = github.getOctokit(githubToken, {
         baseUrl: githubBaseURL
     });
-    await octokit.rest.issues.createComment({
-        owner: repoOwner,
-        repo: repoName,
-        issue_number: prNumber,
-        body: answerTemplate.replace('${answer}', answer)
-        // in_reply_to: comment.id
+    const commentUrl =  `${githubBaseURL}/${repoOwner}/${repoName}/pulls/${prNumber}`;
+      var response = await axios.post(commentUrl, {
+          body: answerTemplate.replace('${answer}', answer),
+          headers: {
+              Authorization: `Bearer ${githubToken}`
+          }
       });
+      const output = response.data;
+      core.debug(`Output Values: ${output}`);
+    // await octokit.rest.issues.createComment({
+    //     owner: repoOwner,
+    //     repo: repoName,
+    //     issue_number: prNumber,
+    //     body: answerTemplate.replace('${answer}', answer)
+    //     // in_reply_to: comment.id
+    //   });
   } catch (error) {
     core.setFailed(error.message);
   }
