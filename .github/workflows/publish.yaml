@@ -1,0 +1,19 @@
+name: Publish to Marketplace
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: https://github.com/actions/checkout@v3
+    - name: Setup Node.js
+      uses: https://github.com/actions/setup-node@v3
+      with:
+        node-version: '16'
+    - name: Install dependencies
+      run: npm install
+    

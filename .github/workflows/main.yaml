@@ -1,0 +1,27 @@
+name: Code Review
+
+on:
+  pull_request:
+    types: [opened]
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  code-review:
+    if: |
+      github.event_name == 'pull_request' ||
+        (github.event.comment.user.login == 'adshao' &&
+          startsWith(github.event.comment.body, 'chatgpt'))
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - uses: hmarr/debug-action@v2
+    - name: Gitea Code Review
+      uses: ./
+      with:
+        PROGRAMMING_LANGUAGE: 'JavaScript'
+        REVIEW_COMMENT_PREFIX: 'chatgpt:'
+        FULL_REVIEW_COMMENT: 'chatgpt'
+        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
