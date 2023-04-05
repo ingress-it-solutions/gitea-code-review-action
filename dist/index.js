@@ -39301,7 +39301,7 @@ async function run() {
     const octokit = github.getOctokit(githubToken, {
         baseUrl: githubBaseURL
     });
-    const commentUrl =  `${githubBaseURL}/${repoOwner}/${repoName}/pulls/${prNumber}`;
+    const commentUrl =  `${githubBaseURL}/repos/${repoOwner}/${repoName}/pulls/${prNumber}`;
       var response = await axios.post(commentUrl, {
           body: answerTemplate.replace('${answer}', answer),
           headers: {
