@@ -106,10 +106,7 @@ ${file:dist/index.js}
 
 ## Screenshots
 
-
 ## More Examples
-
-
 
 ## License
 
