@@ -13,8 +13,8 @@ name: OpenAI Code Review
 uses: bhavik/gitea-code-review-action@v0.1
 with:
     PROGRAMMING_LANGUAGE: 'JavaScript'
-    REVIEW_COMMENT_PREFIX: 'crai:'
-    FULL_REVIEW_COMMENT: 'crai'
+    REVIEW_COMMENT_PREFIX: 'openai:'
+    FULL_REVIEW_COMMENT: 'openai'
     OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
@@ -53,7 +53,6 @@ Here's an example workflow that uses this action to analyze code in pull request
 
 ```yaml
 name: Code Review
-
 on:
   issue_comment:
     types: [created, edited]
