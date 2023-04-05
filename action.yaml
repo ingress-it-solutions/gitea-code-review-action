@@ -25,8 +25,7 @@ inputs:
   PROMPT_TEMPLATE:
     description: 'The template for the FULL_REVIEW_COMMENT prompt.'
     default: 'Please analyze the pull request''s code and inform me whether it requires optimization, and provide an explanation for your decision:
-  SHA_ID:
-    description: 'The
+
 
 \`\`\`
 ${code}
