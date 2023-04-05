@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "A Gitea Action that uses OPENAI to review code",
   "main": "index.js",
+  "scripts": {
+    "prepare" : "ncc build index.js -o dist --source-map --license licenses.txt"
+  },
   "keywords": [
     "gitea",
     "action",
@@ -13,6 +16,7 @@
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
+    "@vercel/ncc": "^0.36.1",
     "axios": "^1.3.4",
     "https-proxy-agent": "^5.0.1",
     "language-detect": "1.1.0"
