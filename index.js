@@ -112,25 +112,17 @@ async function run() {
     core.debug(`openai response: ${answer}`);
 
     // Reply to the review comment with the OpenAI response
-    const octokit = github.getOctokit(githubToken, {
+    const client = new github.GitHub(githubToken, {
         baseUrl: githubBaseURL
     });
-    const commentUrl =  `${githubBaseURL}/repos/${repoOwner}/${repoName}/pulls/${prNumber}`;
-      var response = await axios.post(commentUrl, {
-          body: answerTemplate.replace('${answer}', answer),
-          headers: {
-              Authorization: `Bearer ${githubToken}`
-          }
+
+    await client.issues.createComment({
+        owner: repoOwner,
+        repo: repoName,
+        issue_number: prNumber,
+        body: answerTemplate.replace('${answer}', answer)
+
       });
-      const output = response.data;
-      core.debug(`Output Values: ${output}`);
-    // await octokit.rest.issues.createComment({
-    //     owner: repoOwner,
-    //     repo: repoName,
-    //     issue_number: prNumber,
-    //     body: answerTemplate.replace('${answer}', answer)
-    //     // in_reply_to: comment.id
-    //   });
   } catch (error) {
     core.setFailed(error.message);
   }
