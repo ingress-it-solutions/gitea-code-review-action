@@ -1,17 +1,17 @@
 name: Gitea Code Review
-description: A GitHub Action that uses OpenAI ChatGPT to review code in pull request.
+description: A GitHub Action that uses OpenAI to review code in pull request.
 inputs:
   PROGRAMMING_LANGUAGE:
     description: 'The programming language used in the GitHub repository. If not provided, the detected programming language will be used.'
     default: ''
   FULL_REVIEW_COMMENT:
     description: 'The comment to trigger a code review for the pull request.'
-    default: 'chatgpt'
+    default: 'openai'
   REVIEW_COMMENT_PREFIX:
     description: 'The comment prefix to trigger a code review with the comment content.'
-    default: 'chatgpt:'
+    default: 'openai:'
   OPENAI_TOKEN:
-    description: 'The API token for the OpenAI ChatGPT API.'
+    description: 'The API token for the OpenAI API.'
     required: true
   GITHUB_TOKEN:
     description: 'The API token for the Github API.'
