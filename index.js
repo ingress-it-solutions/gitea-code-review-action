@@ -44,17 +44,19 @@ async function run() {
     const repoOwner = github.context.payload.repository.owner.login;
     const prNumber = github.context.payload.number || github.context.payload.issue.number; // get number from a pull request event or comment event
 
-    // Get the code to analyze from the review comment 
-    var content = comment && comment.body || "";
+    // Get the code to analyze from the review comment
 
-    const url = `${githubBaseURL}/${repoOwner}/${repoName}/pulls/${prNumber}`;
-    core.debug(`diff url: ${url}`);
-    var response = await axios.get(url, {
-        headers: {
-            Authorization: `Bearer ${githubToken}`,
-            Accept: 'application/vnd.github.diff'
-        }
-    });
+
+    var content = comment && comment.body || '';
+
+      const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/pulls/${prNumber}/diff`;
+      console.log(`diff url: ${url}`);
+      var response = await axios.get(url, {
+          headers: {
+              Authorization: `token ${giteaToken}`,
+              Accept: 'application/vnd.github.diff'
+          }
+      });
     const code = response.data;
     core.debug(`diff code: ${code}`);
     const files = parsePullRequestDiff(code);
@@ -112,25 +114,17 @@ async function run() {
     core.debug(`openai response: ${answer}`);
 
     // Reply to the review comment with the OpenAI response
-    const octokit = github.getOctokit(githubToken, {
+    const client = new github.GitHub(githubToken, {
         baseUrl: githubBaseURL
     });
-    const commentUrl =  `${githubBaseURL}/repos/${repoOwner}/${repoName}/pulls/${prNumber}`;
-      var response = await axios.post(commentUrl, {
-          body: answerTemplate.replace('${answer}', answer),
-          headers: {
-              Authorization: `Bearer ${githubToken}`
-          }
+
+    await client.issues.createComment({
+        owner: repoOwner,
+        repo: repoName,
+        issue_number: prNumber,
+        body: answerTemplate.replace('${answer}', answer)
+
       });
-      const output = response.data;
-      core.debug(`Output Values: ${output}`);
-    // await octokit.rest.issues.createComment({
-    //     owner: repoOwner,
-    //     repo: repoName,
-    //     issue_number: prNumber,
-    //     body: answerTemplate.replace('${answer}', answer)
-    //     // in_reply_to: comment.id
-    //   });
   } catch (error) {
     core.setFailed(error.message);
   }
