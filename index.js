@@ -27,6 +27,7 @@ async function run() {
     const promptTemplate = core.getInput('PROMPT_TEMPLATE');
     const maxCodeLength = core.getInput('MAX_CODE_LENGTH');
     const answerTemplate = core.getInput('ANSWER_TEMPLATE');
+    const giteaToken = core.getInput('GITHUB_TOKEN');
 
     core.debug(`programmingLanguage: ${programmingLanguage}`);
     core.debug(`openaiToken length: ${openaiToken.length}`);
