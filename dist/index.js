@@ -39230,17 +39230,19 @@ async function run() {
     const repoOwner = github.context.payload.repository.owner.login;
     const prNumber = github.context.payload.number || github.context.payload.issue.number; // get number from a pull request event or comment event
 
-    // Get the code to analyze from the review comment 
-    var content = comment && comment.body || "";
+    // Get the code to analyze from the review comment
 
-    const url = `${githubBaseURL}/${repoOwner}/${repoName}/pulls/${prNumber}`;
-    core.debug(`diff url: ${url}`);
-    var response = await axios.get(url, {
-        headers: {
-            Authorization: `Bearer ${githubToken}`,
-            Accept: 'application/vnd.github.diff'
-        }
-    });
+
+    var content = comment && comment.body || '';
+
+      const url = `${giteaBaseURL}/api/v1/repos/${repoOwner}/${repoName}/pulls/${prNumber}/diff`;
+      console.log(`diff url: ${url}`);
+      var response = await axios.get(url, {
+          headers: {
+              Authorization: `token ${giteaToken}`,
+              Accept: 'application/vnd.github.diff'
+          }
+      });
     const code = response.data;
     core.debug(`diff code: ${code}`);
     const files = parsePullRequestDiff(code);
