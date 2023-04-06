@@ -39235,7 +39235,7 @@ async function run() {
 
     var content = comment && comment.body || '';
 
-      const url = `${giteaBaseURL}/api/v1/repos/${repoOwner}/${repoName}/pulls/${prNumber}/diff`;
+      const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/pulls/${prNumber}/diff`;
       console.log(`diff url: ${url}`);
       var response = await axios.get(url, {
           headers: {
