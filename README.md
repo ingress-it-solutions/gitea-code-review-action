@@ -2,7 +2,7 @@
 
 # OpenAI Code Review
 
-A Gitea Action that uses OpenAI to analyze code in pull request comments.
+A Gitea Action that uses OpenAI to analyze code in pull request comments. Test message
 
 ## Usage
 
