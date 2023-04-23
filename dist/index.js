@@ -39201,6 +39201,8 @@ function configWithProxy(config) {
     return c;
 }
 
+
+
 async function run() {
   try {
     // Get input values
@@ -39351,9 +39353,18 @@ async function run() {
 
         });
     } else if (sourceAt === 'gitea')
-      {
+    {
 
+        const comment = answerTemplate.replace('${answer}', answer);
+        // Make a POST request to create a comment on a pull request
+        const createCommentOnPullRequest = async (repoOwner, repoName, prNumber, comment) => {
+            const url = `${githubBaseURL}/repos/${repoOwner}/${repoName}/issues/${prNumber}/comments`;
+            const headers = { 'Authorization': `token ${githubToken}` };
+            const data = { 'body': comment };
+            await axios.post(url, data, { headers });
         }
+        await createCommentOnPullRequest(repoOwner, repoName, prNumber, comment);
+    }
   } catch (error) {
     core.setFailed(error.message);
   }
