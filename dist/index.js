@@ -39214,6 +39214,7 @@ async function run() {
     const maxCodeLength = core.getInput('MAX_CODE_LENGTH');
     const answerTemplate = core.getInput('ANSWER_TEMPLATE');
     const giteaToken = core.getInput('GITHUB_TOKEN');
+    const sourceAt = core.getInput('SOURCE_AT');
 
     core.debug(`programmingLanguage: ${programmingLanguage}`);
     core.debug(`openaiToken length: ${openaiToken.length}`);
@@ -39224,6 +39225,7 @@ async function run() {
     core.debug(`promptTemplate: ${promptTemplate}`);
     core.debug(`maxCodeLength: ${maxCodeLength}`);
     core.debug(`answerTemplate: ${answerTemplate}`);
+    core.debug(`SourceAt: ${sourceAt}`);
 
     // Get information about the pull request review
     const comment = github.context.payload.comment;
@@ -39232,43 +39234,78 @@ async function run() {
     const prNumber = github.context.payload.number || github.context.payload.issue.number; // get number from a pull request event or comment event
 
     // Get the code to analyze from the review comment
+      var content = comment && comment.body || '';
 
+      if(sourceAt === 'github') {
 
-    var content = comment && comment.body || '';
+          const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/pulls/${prNumber}/diff`;
+          console.log(`diff url: ${url}`);
+          var response = await axios.get(url, {
+              headers: {
+                  Authorization: `token ${giteaToken}`,
+                  Accept: 'application/vnd.github.diff'
+              }
+          });
+          const code = response.data;
+          core.debug(`diff code: ${code}`);
+          const files = parsePullRequestDiff(code);
+          core.debug(`diff files: ${files}`);
 
-      const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/pulls/${prNumber}/diff`;
-      console.log(`diff url: ${url}`);
-      var response = await axios.get(url, {
-          headers: {
-              Authorization: `token ${giteaToken}`,
-              Accept: 'application/vnd.github.diff'
+          if (!content || content == fullReviewComment) {
+              // Extract the code from the pull request content
+              content = promptTemplate.replace('${code}', code);
+          } else {
+              content = content.substring(reviewCommentPrefix.length);
+              content = content.replace('${code}', code);
+              const fileNames = findFileNames(content);
+              core.debug(`found files name in commment: ${fileNames}`);
+              for (const fileName of fileNames) {
+                  for (const key of Object.keys(files)) {
+                      if (key.includes(fileName)) {
+                          core.debug(`replace \${file:${fileName}} with ${key}'s diff`);
+                          content = content.replace(`\${file:${fileName}}`, files[key]);
+                          break;
+                      }
+                  }
+              }
           }
-      });
-    const code = response.data;
-    core.debug(`diff code: ${code}`);
-    const files = parsePullRequestDiff(code);
-    core.debug(`diff files: ${files}`);
+          content = content.substring(0, maxCodeLength);
+      }
+      else if(sourceAt === 'gitea')
+      {
+          const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/pulls/${prNumber}/diff`;
+          console.log(`diff url: ${url}`);
+          var response = await axios.get(url, {
+              headers: {
+                  Authorization: `token ${githubToken}`,
+                  Accept: 'application/vnd.github.diff'
+              }
+          });
+          const code = response.data;
+          core.debug(`diff code: ${code}`);
+          const files = parsePullRequestDiff(code);
+          core.debug(`diff files: ${files}`);
 
-    if (!content || content == fullReviewComment) {
-        // Extract the code from the pull request content
-        content = promptTemplate.replace('${code}', code);
-    } else {
-        content = content.substring(reviewCommentPrefix.length);
-        content = content.replace('${code}', code);
-        const fileNames = findFileNames(content);
-        core.debug(`found files name in commment: ${fileNames}`);
-        for (const fileName of fileNames) {
-            for (const key of Object.keys(files)) {
-                if (key.includes(fileName)) {
-                    core.debug(`replace \${file:${fileName}} with ${key}'s diff`);
-                    content = content.replace(`\${file:${fileName}}`, files[key]);
-                    break;
-                }
-            }
-        }
-    }
-    content = content.substring(0, maxCodeLength);
-
+          if (!content || content == fullReviewComment) {
+              // Extract the code from the pull request content
+              content = promptTemplate.replace('${code}', code);
+          } else {
+              content = content.substring(reviewCommentPrefix.length);
+              content = content.replace('${code}', code);
+              const fileNames = findFileNames(content);
+              core.debug(`found files name in commment: ${fileNames}`);
+              for (const fileName of fileNames) {
+                  for (const key of Object.keys(files)) {
+                      if (key.includes(fileName)) {
+                          core.debug(`replace \${file:${fileName}} with ${key}'s diff`);
+                          content = content.replace(`\${file:${fileName}}`, files[key]);
+                          break;
+                      }
+                  }
+              }
+          }
+          content = content.substring(0, maxCodeLength);
+      }
     // Determine the programming language if it was not provided
     if (programmingLanguage == 'auto') {
         const detectedLanguage = detect(code);
@@ -39300,18 +39337,23 @@ async function run() {
     const answer = response.data.choices[0].message.content;
     core.debug(`openai response: ${answer}`);
 
-    // Reply to the review comment with the OpenAI response
-    const client = new github.GitHub(githubToken, {
-        baseUrl: githubBaseURL
-    });
+    if(sourceAt === 'github') {
+        // Reply to the review comment with the OpenAI response
+        const client = new github.GitHub(githubToken, {
+            baseUrl: githubBaseURL
+        });
 
-    await client.issues.createComment({
-        owner: repoOwner,
-        repo: repoName,
-        issue_number: prNumber,
-        body: answerTemplate.replace('${answer}', answer)
+        await client.issues.createComment({
+            owner: repoOwner,
+            repo: repoName,
+            issue_number: prNumber,
+            body: answerTemplate.replace('${answer}', answer)
 
-      });
+        });
+    } else if (sourceAt === 'gitea')
+      {
+
+        }
   } catch (error) {
     core.setFailed(error.message);
   }
