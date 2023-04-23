@@ -22,13 +22,12 @@ inputs:
     description: 'The maximum code length for the pull request to be sent to OpenAI.'
     default: 6000
     type: int
-  PROMPT_TEMPLATE:
-    description: 'The template for the FULL_REVIEW_COMMENT prompt.'
-    default: 'Please analyze the pull request''s code and inform me whether it requires optimization, and provide an explanation for your decision:
   SOURCE_AT:
     description: 'Where is the source code located'
     default: 'github'
-
+  PROMPT_TEMPLATE:
+    description: 'The template for the FULL_REVIEW_COMMENT prompt.'
+    default: 'Please analyze the pull request''s code and inform me whether it requires optimization, and provide an explanation for your decision:
 \`\`\`
 ${code}
 \`\`\`'
