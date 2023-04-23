@@ -89,7 +89,7 @@ async function run() {
       }
       else if(sourceAt === 'gitea')
       {
-          const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/pulls/${prNumber}/diff`;
+          const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/pulls/${prNumber}.diff`;
           console.log(`diff url: ${url}`);
           var response = await axios.get(url, {
               headers: {
