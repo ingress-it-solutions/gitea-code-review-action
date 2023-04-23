@@ -39240,11 +39240,11 @@ async function run() {
 
       if(sourceAt === 'github') {
 
-          const url = `${githubBaseURL}/repos/${repoOwner}/${repoName}/pulls/${prNumber}/diff`;
+          const url = `${githubBaseURL}/repos/${repoOwner}/${repoName}/pulls/${prNumber}`;
           console.log(`diff url: ${url}`);
           var response = await axios.get(url, {
               headers: {
-                  Authorization: `token ${giteaToken}`,
+                  Authorization: `token ${githubToken}`,
                   Accept: 'application/vnd.github.diff'
               }
           });
