@@ -39341,11 +39341,11 @@ async function run() {
 
     if(sourceAt === 'github') {
         // Reply to the review comment with the OpenAI response
-        const client = new github.GitHub(githubToken, {
+        const client = new github.getOctokit(githubToken, {
             baseUrl: githubBaseURL
         });
 
-        await client.issues.createComment({
+        await octokit.rest.issues.createComment({
             owner: repoOwner,
             repo: repoName,
             issue_number: prNumber,
