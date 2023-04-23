@@ -39341,7 +39341,7 @@ async function run() {
 
     if(sourceAt === 'github') {
         // Reply to the review comment with the OpenAI response
-        const client = new github.getOctokit(githubToken, {
+        const octokit = new github.getOctokit(githubToken, {
             baseUrl: githubBaseURL
         });
 
