@@ -39357,15 +39357,20 @@ async function run() {
 
         const comment = answerTemplate.replace('${answer}', answer);
         // Make a POST request to create a comment on a pull request
-        const createCommentOnPullRequest = async (repoOwner, repoName, prNumber, comment) => {
-            const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/issues/${prNumber}/comments`;
-            const headers = { 'Authorization': `token ${githubToken}` };
-            const data = { 'body': comment };
-            await axios.post(url, data, { headers });
-        }
-        await createCommentOnPullRequest(repoOwner, repoName, prNumber, comment);
+
+        const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/issues/${prNumber}/comments`;
+        const headers = { 'Authorization': `token ${githubToken}` };
+        const data = { 'body': comment };
+        core.debug(`url: ${url}`);
+        core.debug(`headers: ${headers}`);
+        core.debug(`data: ${data}`);
+
+        await axios.post(url, data, { headers });
+
     }
   } catch (error) {
+      core.debug(error.line);
+      core.debug(error.content);
     core.setFailed(error.message);
   }
 }
