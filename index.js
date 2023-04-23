@@ -169,22 +169,18 @@ async function run() {
     } else if (sourceAt === 'gitea')
     {
 
-        const comment = answerTemplate.replace('${answer}', answer);
+
         // Make a POST request to create a comment on a pull request
 
         const url = `${githubBaseURL}/api/v1/repos/${repoOwner}/${repoName}/issues/${prNumber}/comments`;
-        const headers = { 'Authorization': `token ${githubToken}` };
-        const data = { 'body': comment };
+        const headers = { 'Content-Type': 'application/json', 'Authorization': `token ${githubToken}` };
+        const data = { 'body': answerTemplate.replace('${answer}', answer)};
         core.debug(`url: ${url}`);
         core.debug(`headers: ${headers}`);
         core.debug(`data: ${data}`);
-
-        await axios.post(url, data, { headers });
-
+        var response = await axios.post(url, data, { headers });
     }
   } catch (error) {
-      core.debug(error.line);
-      core.debug(error.content);
     core.setFailed(error.message);
   }
 }
