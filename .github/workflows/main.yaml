@@ -25,3 +25,4 @@ jobs:
         FULL_REVIEW_COMMENT: 'openai'
         OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        SOURCE_AT: 'github'
