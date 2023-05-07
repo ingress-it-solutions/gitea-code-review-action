@@ -52,7 +52,7 @@ ${code}
 
 ### Summary:
 
-${answer}
+${answer}'
 
 runs:
   using: 'node16'
