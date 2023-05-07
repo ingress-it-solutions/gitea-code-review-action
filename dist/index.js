@@ -39213,6 +39213,8 @@ async function run() {
     const githubToken = core.getInput('GITHUB_TOKEN');
     const githubBaseURL = core.getInput('GITHUB_BASE_URL') || process.env.GITHUB_API_URL;
     const promptTemplate = core.getInput('PROMPT_TEMPLATE');
+    const codeTemplate = core.getInput('CODE_TEMPLATE');
+    const jokeTemplate = core.getInput('JOKE_TEMPLATE');
     const maxCodeLength = core.getInput('MAX_CODE_LENGTH');
     const answerTemplate = core.getInput('ANSWER_TEMPLATE');
     const giteaToken = core.getInput('GITHUB_TOKEN');
@@ -39225,6 +39227,8 @@ async function run() {
     core.debug(`githubToken length: ${githubToken.length}`);
     core.debug(`githubBaseURL: ${githubBaseURL}`);
     core.debug(`promptTemplate: ${promptTemplate}`);
+    core.debug(`codeTemplate: ${codeTemplate}`);
+    core.debug(`jokeTemplate: ${jokeTemplate}`);
     core.debug(`maxCodeLength: ${maxCodeLength}`);
     core.debug(`answerTemplate: ${answerTemplate}`);
     core.debug(`SourceAt: ${sourceAt}`);
@@ -39237,7 +39241,7 @@ async function run() {
 
     // Get the code to analyze from the review comment
       var content = comment && comment.body || '';
-
+      var completeContent = comment && comment.body || '';
       if(sourceAt === 'github') {
 
           const url = `${githubBaseURL}/repos/${repoOwner}/${repoName}/pulls/${prNumber}`;
@@ -39255,7 +39259,7 @@ async function run() {
 
           if (!content || content == fullReviewComment) {
               // Extract the code from the pull request content
-              content = promptTemplate.replace('${code}', code);
+              content = codeTemplate.replace('${code}', code);
           } else {
               content = content.substring(reviewCommentPrefix.length);
               content = content.replace('${code}', code);
@@ -39290,7 +39294,7 @@ async function run() {
 
           if (!content || content == fullReviewComment) {
               // Extract the code from the pull request content
-              content = promptTemplate.replace('${code}', code);
+              content = codeTemplate.replace('${code}', code);
           } else {
               content = content.substring(reviewCommentPrefix.length);
               content = content.replace('${code}', code);
@@ -39315,20 +39319,30 @@ async function run() {
         programmingLanguage = detectedLanguage;
     }
 
-    var messages = [{
+    var messageReview = promptTemplate.replace('${code}', content);
+    var messageJoke = jokeTemplate.replace('${code}', content);
+    var reviewInputMessages = [{
         role: "system",
         content: `You are a master of programming language ${programmingLanguage}`
     }, {
         role: "user",
-        content: content
+        content: messageReview
     }];
+
+      var jokeInputMessages = [{
+          role: "system",
+          content: `You are a master of programming language ${programmingLanguage}`
+      }, {
+          role: "user",
+          content: messageJoke
+      }];
 
     core.debug(`content: ${content}`);
 
     // Call the OpenAI ChatGPT API to analyze the code
-    response = await axios.post('https://api.openai.com/v1/chat/completions', {
+    responseReview = await axios.post('https://api.openai.com/v1/chat/completions', {
         "model": "gpt-3.5-turbo",
-        "messages": messages
+        "messages": reviewInputMessages
     }, configWithProxy({
       headers: {
         'Content-Type': 'application/json',
@@ -39336,7 +39350,19 @@ async function run() {
       }
     }));
 
-    const answer = response.data.choices[0].message.content;
+      // Call the OpenAI ChatGPT API to analyze the code
+      responseJoke = await axios.post('https://api.openai.com/v1/chat/completions', {
+          "model": "gpt-3.5-turbo",
+          "messages": jokeInputMessages
+      }, configWithProxy({
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${openaiToken}`
+          }
+      }));
+
+
+    const answer = response.data.choices[0].message.content + '/n/n/n' + responseJoke.data.choices[0].message.content;
     core.debug(`openai response: ${answer}`);
 
     if(sourceAt === 'github') {
