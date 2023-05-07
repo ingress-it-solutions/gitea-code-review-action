@@ -39362,7 +39362,7 @@ async function run() {
       }));
 
 
-    const answer = response.data.choices[0].message.content + '/n/n/n' + responseJoke.data.choices[0].message.content;
+    const answer = response.data.choices[0].message.content + '/n/n' + '### Funny Joke about this PR:' +'/n/n' + responseJoke.data.choices[0].message.content;
     core.debug(`openai response: ${answer}`);
 
     if(sourceAt === 'github') {

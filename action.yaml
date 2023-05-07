@@ -54,11 +54,6 @@ ${code}
 
 ${answer}
 
-
-### Funny Joke about this PR:
-
-${joke}'
-
 runs:
   using: 'node16'
   main: 'dist/index.js'
