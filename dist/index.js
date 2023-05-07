@@ -39259,7 +39259,7 @@ async function run() {
 
           if (!content || content == fullReviewComment) {
               // Extract the code from the pull request content
-              content = codeTemplate.replace('${code}', code);
+              content =  code;
           } else {
               content = content.substring(reviewCommentPrefix.length);
               content = content.replace('${code}', code);
@@ -39294,7 +39294,7 @@ async function run() {
 
           if (!content || content == fullReviewComment) {
               // Extract the code from the pull request content
-              content = codeTemplate.replace('${code}', code);
+              content = code;
           } else {
               content = content.substring(reviewCommentPrefix.length);
               content = content.replace('${code}', code);
