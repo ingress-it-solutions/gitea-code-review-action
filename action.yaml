@@ -27,14 +27,30 @@ inputs:
     default: 'github'
   PROMPT_TEMPLATE:
     description: 'The template for the FULL_REVIEW_COMMENT prompt.'
-    default: 'Please analyze the pull request''s code and inform me whether it requires optimization, and provide an explanation for your decision:
+    default: 'Please analyze the pull request''s code and provide me an explanation for your decision in bullet points. Also provide me whether it requires optimization or code correction:
 \`\`\`
 ${code}
 \`\`\`'
+
+  JOKE_TEMPLATE:
+    description: 'The template for the FULL_REVIEW_JOKE prompt.'
+    default: 'Please analyze the pull request''s code and can you write a funny joke about it.:
+\`\`\`
+${code}
+\`\`\`'
+
+  CODE_TEMPLATE:
+    description: 'The place for the actual code.'
+    default: '
+\`\`\`
+${code}
+\`\`\`'
+
   ANSWER_TEMPLATE:
     description: 'The template for the answer sent to the GitHub comment.'
     default: 'AI Code Review:
 
+### Summary:
 
 ${answer}'
 
