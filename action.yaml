@@ -66,9 +66,12 @@ ${code}
                - Are sensitive data and credentials stored securely?
                - Are all external libraries and packages up-to-date?
                - Is the code protected against common security vulnerabilities such as SQL injection and cross-site scripting (XSS)?'
+
   ANSWER_TEMPLATE:
     description: 'The template for the answer sent to the GitHub comment.'
     default: 'AI Code Review:
+=======
+### Summary:
 
 ${answer}'
 runs:
