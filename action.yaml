@@ -83,7 +83,7 @@ ${code}
   ANSWER_TEMPLATE:
     description: 'The template for the answer sent to the GitHub comment.'
     default: 'AI Code Review:
-=======
+
 ### Summary:
 
 ${answer}'
