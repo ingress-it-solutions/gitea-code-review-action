@@ -33,39 +33,35 @@ inputs:
     - Summarize the overview of the changes made
     - Identify potential issues related to logic and runtime
     - Output as a markdown document, with the following sections:
-        {output}
+        #### Overview of changes:
+          - Summarize the overview of the changes made
+        #### issues:
+          - Identify potential issues related to logic and runtime
+          - Identify issues mentioned in the code review checklist
+        #### Action items:
+          - Action items needed before the change can be approved
     - If there are no issues, output "None"
     - If there are no action items, output "None"
     - Create a bullet list of action items needed before the change can be approved
     - The response sentences are no longer than 16 words each
     - Keep the response sentences as short as possible
     - Focus on items mentioned in the given code review checklist:
-        {checklist}
+        Code Structure
+          - Is the codebase organized according to Laravel Framework recommended project structure?
+          - Are there any unnecessary files, folders, or code modules?
+          - Does the code follow the Single Responsibility Principle (SRP) and Dont Repeat Yourself (DRY) principle?
+        Error Handling
+          - Are all error scenarios covered in the code?
+          - Are the error messages clear and helpful?
+          - Is the code handling errors gracefully?
+        Security
+          - Are sensitive data and credentials stored securely?
+          - Are all external libraries and packages up-to-date?
+          - Is the code protected against common security vulnerabilities such as SQL injection and cross-site scripting (XSS)?
         
 \`\`\`
 ${code}
 \`\`\`'
-  output: |
-      #### Overview of changes:
-        - Summarize the overview of the changes made
-      #### issues:
-        - Identify potential issues related to logic and runtime
-        - Identify issues mentioned in the code review checklist
-      #### Action items:
-        - Action items needed before the change can be approved'
-  checklist: |
-      Code Structure
-        - Is the codebase organized according to Laravel Framework recommended project structure?
-               - Are there any unnecessary files, folders, or code modules?
-               - Does the code follow the Single Responsibility Principle (SRP) and Dont Repeat Yourself (DRY) principle?
-               Error Handling
-               - Are all error scenarios covered in the code?
-               - Are the error messages clear and helpful?
-               - Is the code handling errors gracefully?
-               Security
-               - Are sensitive data and credentials stored securely?
-               - Are all external libraries and packages up-to-date?
-               - Is the code protected against common security vulnerabilities such as SQL injection and cross-site scripting (XSS)?'
 
   ANSWER_TEMPLATE:
     description: 'The template for the answer sent to the GitHub comment.'
