@@ -35,11 +35,15 @@ inputs:
     - Output as a markdown document, with the following sections:
         #### Overview of changes:
           - Summarize the overview of the changes made
+        #### Changelog:
+          - Summarize the overview in a bullet point to consider it in Change-log.  
         #### issues:
           - Identify potential issues related to logic and runtime
           - Identify issues mentioned in the code review checklist
         #### Action items:
-          - Action items needed before the change can be approved
+          - Mandatory action items that are must and needed before the change can be approved
+        #### Joke about this PR:
+          - Tell me a joke about this Code Review  
     - If there are no issues, output "None"
     - If there are no action items, output "None"
     - Create a bullet list of action items needed before the change can be approved
@@ -47,7 +51,20 @@ inputs:
     - Keep the response sentences as short as possible
     - Focus on items mentioned in the given code review checklist:
         Code Structure
-          - Is the codebase organized according to Laravel Framework recommended project structure?
+          - Validation
+          - Business logic should be in service class
+          - Don't repeat yourself (DRY)
+          - Prefer to use Eloquent over using Query Builder and raw SQL queries. Prefer collections over arrays
+          - Mass assignment
+          - Do not execute queries in Blade templates and use eager loading (N + 1 problem)
+          - Chunk data for data-heavy tasks
+          - Comment your code, but prefer descriptive method and variable names over comments
+          - Do not put JS and CSS in Blade templates and do not put any HTML in PHP classes
+          - Use config and language files, constants instead of text in the code
+          - Use standard Laravel tools accepted by community
+          - Follow Laravel naming conventions
+          - Use shorter and more readable syntax where possible
+          - Use IoC container or facades instead of new Class
           - Are there any unnecessary files, folders, or code modules?
           - Does the code follow the Single Responsibility Principle (SRP) and Dont Repeat Yourself (DRY) principle?
         Error Handling
