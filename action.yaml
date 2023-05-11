@@ -45,7 +45,7 @@ inputs:
 \`\`\`
 ${code}
 \`\`\`'
-  output: '
+  output: |
       #### Overview of changes:
         - Summarize the overview of the changes made
       #### issues:
@@ -53,7 +53,7 @@ ${code}
         - Identify issues mentioned in the code review checklist
       #### Action items:
         - Action items needed before the change can be approved'
-  checklist: '
+  checklist: |
       Code Structure
         - Is the codebase organized according to Laravel Framework recommended project structure?
                - Are there any unnecessary files, folders, or code modules?
