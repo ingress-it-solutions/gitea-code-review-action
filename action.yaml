@@ -27,54 +27,87 @@ inputs:
     default: 'github'
   PROMPT_TEMPLATE:
     description: 'The template for the FULL_REVIEW_COMMENT prompt.'
-    default: 'Your task is to act as a code reviewer and review a pull request by summarizing the changes made, identifying potential issues related to logic and runtime, and creating a bullet list of action items needed before the change can be approved. The output should focus on items mentioned in the given code review checklist.
+    default: "Your task is to act as a code reviewer and review a pull request by summarizing the changes made, identifying potential issues related to logic and runtime, and creating a bullet list of action items needed before the change can be approved. The output should focus on items mentioned in the given code review checklist.
     Instructions:
-    - Review the output of git diff for the pull request
-    - Summarize the overview of the changes made
-    - Identify potential issues related to logic and runtime
-    - Output as a markdown document, with the following sections:
-        #### Overview of changes:
-          - Summarize the overview of the changes made
-        #### Changelog:
-          - Summarize the overview in a bullet point to consider it in Change-log.  
-        #### issues:
-          - Identify potential issues related to logic and runtime
-          - Identify issues mentioned in the code review checklist
-        #### Action items:
-          - Mandatory action items that are must and needed before the change can be approved
-        #### Joke about this PR:
-          - Tell me a joke about this Code Review  
-    - If there are no issues, output "None"
-    - If there are no action items, output "None"
-    - Create a bullet list of action items needed before the change can be approved
-    - The response sentences are no longer than 16 words each
-    - Keep the response sentences as short as possible
-    - Focus on items mentioned in the given code review checklist:
-        Code Structure
-          - Validation
-          - Business logic should be in service class
-          - Dont repeat yourself (DRY)
-          - Prefer to use Eloquent over using Query Builder and raw SQL queries. Prefer collections over arrays
-          - Mass assignment
-          - Do not execute queries in Blade templates and use eager loading (N + 1 problem)
-          - Chunk data for data-heavy tasks
-          - Comment your code, but prefer descriptive method and variable names over comments
-          - Do not put JS and CSS in Blade templates and do not put any HTML in PHP classes
-          - Use config and language files, constants instead of text in the code
-          - Use standard Laravel tools accepted by community
-          - Follow Laravel naming conventions
-          - Use shorter and more readable syntax where possible
-          - Use IoC container or facades instead of new Class
-          - Are there any unnecessary files, folders, or code modules?
-          - Does the code follow the Single Responsibility Principle (SRP) and Dont Repeat Yourself (DRY) principle?
-        Error Handling
-          - Are all error scenarios covered in the code?
-          - Are the error messages clear and helpful?
-          - Is the code handling errors gracefully?
-        Security
-          - Are sensitive data and credentials stored securely?
-          - Are all external libraries and packages up-to-date?
-          - Is the code protected against common security vulnerabilities such as SQL injection and cross-site scripting (XSS)?
+
+- Review the output of git diff for the pull request
+- Identify potential issues related to logic and runtime
+- Output as a markdown document, with the following sections:
+    #### Overall Summary:
+      - Each bullet point should provide the summary on what this Pull request does. Each point shouldn't exceed more than 14 words.
+    #### Issues & Action Items:
+      - Title of the check that it violated and a one liner guideline to user on how it can be fixed.
+      - TODO List with the name of the file, violating policy and line no where you think it was violated.
+    #### APPROVE / DISAPPROVE this PR:
+      - Tell me if this Pull request can be approved or not. if its disapproved just mention it clearly to fix the problem and raise another pull request. If its approved then appreciate everyone and say it can be approved.
+- If there are no issues, output 'None'
+- If there are no action items, output 'None'
+- Create a bullet list of action items needed before the change can be approved
+- The response sentences are no longer than 16 words each
+- Keep the response sentences as short as possible
+- Check for N+1 query detection:
+  Anytime in a pull request you see that there are foreach loop or call a Collection method you will look for potential N+1 problems.
+    Here are the list of things that qualifies as a problem:
+    - Access a relationship that is not eager-loaded either in the body of the current function (using with() or load()) or in the model itself (using the $with property).
+    - A call to DB functions in the loop such as DB::table()
+    - A call to static Model functions in the loop such as Product::find()
+    - A call to Model functions in the loop such as $product->save()
+- Check for Missing whenLoaded() calls:
+  If a pull request shows push an HTTP resource class you will check if pull request code used the whenLoaded() helper provided by Laravel. It's a great way to avoid N+1 and performance issues.
+- Check for Missing DB index in migration:
+  If a pull request code push a migration we check if it has added any kind of index to new columns. The full path has to include migration in order to trigger this check.
+- Check for Missing down method in migration:
+  If a pull request code push a migration we check if it has a down method and it's not empty. The full path has to include migration in order to trigger this check.
+- Check for Missing foreign key in migration:
+  If a pull request code create a new column that ends with _id you will warn if a pull request code forgot to add a foreign key to that column.
+- Check for Missing authorization in request:
+  If a pull request code push an HTTP request we check if it has an authorize method and it's not return true. The filename must end with Request.php or the full path has to include Requests in order to trigger this check.
+- Check for Validation in controller:
+  If a pull request code push a controller we check if it uses any kind of validator. Usually, it's a better idea to move this logic to a Request class. The filename must end with Controller.php or the full path has to include Controllers in order to trigger this check.
+- Check for Missing ENV variable:
+  If a pull request code added a new key to one of the config file we check if a pull request code also included it in the .env.example file
+- Check for env() call outside of config files:
+  If a pull request code contains an env() call anywhere outside of a config file it needs to be warn. It's a best practice to only use env() in config files.
+- Check for Forgotten cache keys New:
+  If a pull request code contains a Cache::rememberForever() call It needs to be warn.
+- Check for Validation with reference to Request that has non nullable database table column in migration.  
+- Check for Incorrect dependencies:
+  There are different layers in every Laravel application. Layers such as: HTTP, Business Logic, Database, etc. Each layer has its own dependencies. For example, the database layer should not depend on the HTTP layer. If it does, it should warn.
+    Here are what counts as an incorrect dependency:
+    - This class -> Depends on these
+    - Model -> HTTP, Job, Command, Checker
+    - Job -> HTTP
+    - Command -> HTTP
+    - Mail/Notification -> HTTP, Job, Command
+    - Service -> HTTP
+    - Repository -> HTTP, Job, Command
+- Check for Complex data object:
+  There are some typical classes that should not contain too much business logic since their main purpose is to hold data. These classes are:
+  - Resources
+  - Requests
+  - DataTransferObjects (DTO)
+  - Value Objects
+  - Mail
+  - Notification
+  - Event
+  - Listener
+        
+  If a class that contains too much business logic, it needs to be warn. 'Too much' means that the cyclomatic complexity of the class is larger than 3.
+- Check for Principles
+  Does the code follow the Single Responsibility Principle (SRP) and Dont Repeat Yourself (DRY) principle. If not explain where the user needs to make changes.
+- Check for naming conventions
+  If a pull request code is violating the naming convention it needs to be warn.
+- Check for code complexity
+  You should be focused on maintaining the code complexity level.
+- Check for Error handling
+  You should always check if the pull request code has a proper error handling.
+  - Are all error scenarios covered in the code?
+  - Are the error messages clear and helpful?
+  - Is the code handling errors gracefully?
+- Check for Security
+  - Are sensitive data and credentials stored securely?
+  - Are all external libraries and packages up-to-date?
+  - Is the code protected against common security vulnerabilities such as SQL injection and cross-site scripting (XSS)?
         
 \`\`\`
 ${code}
@@ -82,11 +115,11 @@ ${code}
 
   ANSWER_TEMPLATE:
     description: 'The template for the answer sent to the GitHub comment.'
-    default: 'AI Code Review:
+    default: 'Raktbeej Code Review:
 
 ### Summary:
 
-${answer}'
+${answer}"
 runs:
   using: 'node16'
   main: 'dist/index.js'
