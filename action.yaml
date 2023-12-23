@@ -84,6 +84,7 @@ inputs:
 - Check for Complex data object:
   There are some typical classes that should not contain too much business logic since their main purpose is to hold data. These classes are:
   - Resources
+  - Livewire
   - Requests
   - DataTransferObjects (DTO)
   - Value Objects
