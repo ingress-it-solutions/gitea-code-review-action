@@ -45,34 +45,22 @@ Instructions:
 - Create a bullet list of action items needed before the change can be approved
 - The response sentences are no longer than 16 words each
 - Keep the response sentences as short as possible
-- Check for N+1 query detection:
-  Anytime in a pull request you see that there are foreach loop or call a Collection method you will look for potential N+1 problems.
-  Here are the list of things that qualifies as a problem:
-    - Access a relationship that is not eager-loaded either in the body of the current function (using with() or load()) or in the model itself (using the $with property).
-    - A call to DB functions in the loop such as DB::table()
-    - A call to static Model functions in the loop such as Product::find()
-    - A call to Model functions in the loop such as $product->save()
-- Check for Missing whenLoaded() calls:
-  If a pull request shows push an HTTP resource class you will check if pull request code used the whenLoaded() helper provided by Laravel. It is a great way to avoid N+1 and performance issues.
-- Check for Missing DB index in migration:
-  If a pull request code push a migration we check if it has added any kind of index to new columns. The full path has to include migration in order to trigger this check.
-- Check for Missing down method in migration:
-  If a pull request code push a migration we check if it has a down method and it is not empty. The full path has to include migration in order to trigger this check.
-- Check for Missing foreign key in migration:
-  If a pull request code create a new column that ends with _id you will warn if a pull request code forgot to add a foreign key to that column.
-- Check for Missing authorization in request:
-  If a pull request code push an HTTP request we check if it has an authorize method and it is not return true. The filename must end with Request.php or the full path has to include Requests in order to trigger this check.
-- Check for Validation in controller:
-  If a pull request code push a controller we check if it uses any kind of validator. Usually, it is a better idea to move this logic to a Request class. The filename must end with Controller.php or the full path has to include Controllers in order to trigger this check.
-- Check for Missing ENV variable:
-  If a pull request code added a new key to one of the config file we check if a pull request code also included it in the .env.example file
-- Check for env() call outside of config files:
-  If a pull request code contains an env() call anywhere outside of a config file it needs to be warn. It is a best practice to only use env() in config files.
-- Check for Forgotten cache keys New:
-  If a pull request code contains a Cache::rememberForever() call It needs to be warn.
+- Below code is for laravel framework then you need to check for N+1 query detection in the pull request. If you find for potential N+1 problems you will add it to your response in file name and function.
+- Check for any access to a relationship that is not eager-loaded either in the body of the current function (using with() or load()) or in the model itself (using the $with property).
+- Check for any call to DB functions in the loop such as DB::table()
+- Check for any call to static Model functions in the loop such as Product::find()
+- Check for any call to Model functions in the loop such as $product->save()
+- Check if a pull request shows push an HTTP resource class you will check if pull request code used the whenLoaded() helper provided by Laravel. It is a great way to avoid N+1 and performance issues.
+- Check if a pull request code push a migration we check if it has added any kind of index to new columns. The full path has to include migration in order to trigger this check.
+- Check if a pull request code push a migration we check if it has a down method and it is not empty. The full path has to include migration in order to trigger this check.
+- Check if a pull request code create a new column that ends with _id you will warn if a pull request code forgot to add a foreign key to that column.
+- Check if a pull request code push an HTTP request we check if it has an authorize method and it is not return true. The filename must end with Request.php or the full path has to include Requests in order to trigger this check.
+- Check if a pull request code push a controller we check if it uses any kind of validator. Usually, it is a better idea to move this logic to a Request class. The filename must end with Controller.php or the full path has to include Controllers in order to trigger this check.
+- Check if a pull request code added a new key to one of the config file we check if a pull request code also included it in the .env.example file
+- Check if a pull request code contains an env() call anywhere outside of a config file it needs to be warn. It is a best practice to only use env() in config files.
+- Check if a pull request code contains a Cache::rememberForever() call It needs to be warn.
 - Check for Validation with reference to Request that has non nullable database table column in migration.  
-- Check for Incorrect dependencies:
-  There are different layers in every Laravel application. Layers such as: HTTP, Business Logic, Database, etc. Each layer has its own dependencies. For example, the database layer should not depend on the HTTP layer. If it does, it should warn.
+- Check for Incorrect dependencies as there are different layers in every Laravel application. Layers such as: HTTP, Business Logic, Database, etc. Each layer has its own dependencies. For example, the database layer should not depend on the HTTP layer. If it does, it should warn.
     Here are what counts as an incorrect dependency:
     - This class -> Depends on these
     - Model -> HTTP, Job, Command, Checker
@@ -81,8 +69,7 @@ Instructions:
     - Mail/Notification -> HTTP, Job, Command
     - Service -> HTTP
     - Repository -> HTTP, Job, Command
-- Check for Complex data object:
-  There are some typical classes that should not contain too much business logic since their main purpose is to hold data. These classes are:
+- Check for Complex data object as there are some typical classes that should not contain too much business logic since their main purpose is to hold data. These classes are:
   - Resources
   - Livewire
   - Requests
@@ -92,16 +79,11 @@ Instructions:
   - Notification
   - Event
   - Listener
-- Check for cyclomatic complexity        
-    If a class that contains too much business logic, it needs to be warn. "Too much" means that the cyclomatic complexity of the class is larger than 3.
-- Check for Principles
-    Does the code follow the Single Responsibility Principle (SRP) and Dont Repeat Yourself (DRY) principle. If not explain where the user needs to make changes.
-- Check for naming conventions
-    If a pull request code is violating the naming convention it needs to be warn.
-- Check for code complexity
-    You should be focused on maintaining the code complexity level.
-- Check for Error handling
-    You should always check if the pull request code has a proper error handling.
+- Check for cyclomatic complexity if a class that contains too much business logic, it needs to be warn. "Too much" means that the cyclomatic complexity of the class is larger than 3.
+- Check for pull request to make sure that coder has followed principles of Single Responsibility Principle (SRP) and Dont Repeat Yourself (DRY) principle. If not explain where the user needs to make changes.
+- Check for naming conventions, if a pull request code is violating the naming convention it needs to be warn.
+- Check for code complexity, if the pull request code is violating in maintaining the code complexity level.
+- Check for Error handling in the pull request, if pull request code has a proper error handling in the below scenarios.
     - Are all error scenarios covered in the code?
     - Are the error messages clear and helpful?
     - Is the code handling errors gracefully?
