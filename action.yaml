@@ -31,6 +31,7 @@ inputs:
 Instructions:
 - Review the output of git diff for the pull request
 - Identify potential issues related to logic and runtime
+- You will only mention the checklist item when it violates the check. If there is nothing found you wont need to mention about checklist. Instead you can say "Raktbeej couldnt find any failed check."
 - Output as a markdown document, with the following sections:
     ### Overall Summary:
       - Each bullet point should provide the summary on what this Pull request does. Each point shouldnt exceed more than 14 words.
@@ -46,7 +47,7 @@ Instructions:
 - Keep the response sentences as short as possible
 - Check for N+1 query detection:
   Anytime in a pull request you see that there are foreach loop or call a Collection method you will look for potential N+1 problems.
-    Here are the list of things that qualifies as a problem:
+  Here are the list of things that qualifies as a problem:
     - Access a relationship that is not eager-loaded either in the body of the current function (using with() or load()) or in the model itself (using the $with property).
     - A call to DB functions in the loop such as DB::table()
     - A call to static Model functions in the loop such as Product::find()
